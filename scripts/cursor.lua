@@ -6,7 +6,6 @@ function Cursor:new()
     self.image = love.graphics.newImage("/sprites/cursor.png")
     self.pos = vec2(0, 0)
     self.size = vec2(self.image:getWidth(), self.image:getHeight())
-    print(self.position)
 end
 
 function Cursor:update()

@@ -2,13 +2,14 @@ local Player = Object:extend()
 
 function Player:new()
     self.image = love.graphics.newImage("sprites/face.png")
-    self.pos = vec2(100, 100)
+    self.pos = vec2()
+    self.startPos = vec2(self.pos.x, self.pos.y)
     self.size = vec2(self.image:getWidth(), self.image:getHeight())
     self.angle = 0
     self.vel = vec2()
 
     self.collider = world:newRectangleCollider(self.pos.x, self.pos.y, self.size.x, self.size.y)
-    --self.collider:setType("kinematic")
+    self.collider:postSolve(self:collision())
 
     self.friction = 1
 
@@ -47,6 +48,19 @@ function Player:new()
         end
     }
     self.rayLen = 3000
+end
+
+function Player:collision(s1, s2)
+    if self.collider:enter("spikes") then
+        self.collider:setPosition(self.startPos.x, self.startPos.y)
+    end
+    
+    if self.collider:enter("end") then
+        self.collider:setPosition(self.startPos.x, self.startPos.y)
+        print("bust")
+        level = level + 1
+        genMap(2)
+    end
 end
 
 function Player:updateRay(mx, my)
@@ -112,6 +126,7 @@ function Player:update(dt)
     --self.vel.y = self.vel.y + self.gravity * dt
 
     self:controls(dt)
+    self:collision()
     --self:addFriction(dt)
 
     --self.pos.x = self.pos.x + self.vel.x
@@ -139,4 +154,4 @@ function Player:draw()
     --love.graphics.draw(self.hookImage, self.grapplePos.x, self.grapplePos.y, self.hookAngle - math.pi / 2, 1, 1, self.hookSize.x / 2, self.hookSize.y / 2)
 end
 
-return Player()
+return Player
